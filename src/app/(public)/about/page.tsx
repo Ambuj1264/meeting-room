@@ -18,7 +18,7 @@ const About = () => {
         {/* Meeting Description Paragraph */}
         <p className="text-lg sm:text-xl md:text-2xl lg:text-xl mt-4 text-justify">
           Welcome to Meeting Room, the ultimate solution for seamless conference
-          room and meeting space bookings. Whether you're managing a bustling
+          room and meeting space bookings. Whether you&apos;re managing a bustling
           office or organizing an event in any location, our app simplifies the
           process of reserving the perfect space. At Meeting Room, we understand
           that finding the right venue can be time-consuming, which is why we’ve
