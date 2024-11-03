@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Loader from "../../../utility/loader/loading";
 
 const Main = () => {
-  const router = useRouter()
+  const router = useRouter();
   const sumbitData = () => {
     console.log("data submitted");
     router.push("/showdata");

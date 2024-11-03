@@ -1,7 +1,8 @@
 "use client";
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { useSelector } from 'react-redux';
+import Loader from '../../utility/loader/loading';
 
 const Layout = ({children}:{children:React.ReactNode}) => {
     const router = useRouter();
@@ -13,7 +14,7 @@ const Layout = ({children}:{children:React.ReactNode}) => {
       }
     }, [isAuthenticated, router]);
   return (
-    <>{children}</>
+    <Suspense fallback={<Loader />}  >{children}</Suspense>
   )
 }
 
