@@ -1,11 +1,22 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import Link from "next/link";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { errorToast, successToast } from "../../../utility/toast";
+import { useDispatch } from "react-redux";
+import { increment } from "../../../utility/redux/slices/feature/counter";
+import { login } from "../../../utility/redux/slices/feature/auth";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const Login = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -19,9 +30,39 @@ const Login = () => {
         .min(6, "Password must be at least 6 characters")
         .required("Password is required"),
     }),
-    onSubmit: (values) => {
-      // Handle form submission
-      console.log(values);
+    onSubmit: async (values, { setSubmitting, setStatus, resetForm }) => {
+      setSubmitting(true);
+      try {
+        const response = await fetch(
+          `http://localhost:8000/users/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(values),
+          }
+        );
+
+        const data = await response.json();
+        setStatus({ success: data.status === "SUCCESS" });
+        if (data.status === "SUCCESS") {
+          Cookies.set("userToken", data.data.token, { expires: 1 });
+          Cookies.set("userInfo", JSON.stringify(data.data), { expires: 1 });
+          successToast("Login Successful");
+          resetForm();
+          dispatch(increment());
+          dispatch(login());
+          router.push("/main");
+        } else {
+          errorToast(data.message);
+        }
+      } catch (error:any) {
+        errorToast("Something went wrong: " + error.message);
+        setStatus({ success: false });
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
 
@@ -42,17 +83,13 @@ const Login = () => {
             onBlur={formik.handleBlur}
             name="email"
           />
-          {/* Added minHeight to prevent form size change */}
-          <p
-            className="text-red-500 text-sm mt-1 mx-1"
-            style={{ minHeight: "20px" }}
-          >
+          <p className="text-red-500 text-sm mt-1 mx-1" style={{ minHeight: "20px" }}>
             {formik.touched.email && formik.errors.email ? formik.errors.email : ""}
           </p>
         </div>
-        <div>
+        <div className="relative">
           <Input
-            type="password"
+            type={showPassword ? "text" : "password"}
             label="Password"
             placeholder="Enter your password"
             value={formik.values.password}
@@ -60,11 +97,14 @@ const Login = () => {
             onBlur={formik.handleBlur}
             name="password"
           />
-          {/* Added minHeight to prevent form size change */}
-          <p
-            className="text-red-500 text-sm mt-1"
-            style={{ minHeight: "20px" }}
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
           >
+            {showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
+          </button>
+          <p className="text-red-500 text-sm mt-1" style={{ minHeight: "5px" }}>
             {formik.touched.password && formik.errors.password ? formik.errors.password : ""}
           </p>
         </div>
@@ -78,10 +118,7 @@ const Login = () => {
         </Button>
         <p>
           Don&apos;t have an account?{" "}
-          <Link
-            className="text-primary cursor-pointer font-medium"
-            href="/signup"
-          >
+          <Link className="text-primary cursor-pointer font-medium" href="/signup">
             Sign up
           </Link>
         </p>

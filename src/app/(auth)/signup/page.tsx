@@ -11,6 +11,7 @@ const generateId = () => `room_${Math.random().toString(36).substr(2, 9)}`;
 const SignUp = () => {
   // Yup validation schema
   const validationSchema = Yup.object({
+    name: Yup.string().required("Name is required"),
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),
@@ -34,6 +35,7 @@ const SignUp = () => {
 
   // Initial form values
   const initialValues = {
+    name: "",
     email: "",
     password: "",
     company: "",
@@ -42,9 +44,28 @@ const SignUp = () => {
   };
 
   // Form submit handler
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: any, { resetForm }: { resetForm: () => void }) => {
     console.log("Form data", values);
     // Handle form submission here
+    const sendToDatabase = async () => {
+      try {
+        const response = await fetch("http://localhost:8000"+"/users/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    sendToDatabase();
+    //reset the form
+    resetForm();
   };
 
   return (
@@ -60,6 +81,23 @@ const SignUp = () => {
               <h1 className="text-3xl font-bold text-primary">Sign Up</h1>
 
               <div className="flex flex-col">
+                
+                <Field
+                  name="name"
+                  as={Input}
+                  type="text"
+                  label="Name"
+                  placeholder="Enter your name"
+                  error={errors.name && touched.name}
+                />
+                <ErrorMessage
+                  name="name"
+                  component="div"
+                  className="text-red-500 text-sm mt-1 mx-2 min-h-5"
+                />
+              </div>
+              <div className="flex flex-col">
+                
                 <Field
                   name="email"
                   as={Input}

@@ -1,8 +1,9 @@
 "use client";
 import { Button } from "@nextui-org/button";
-import React from "react";
+import React, { Suspense } from "react";
 import BookingForm from "../../../components/forms/BookingForm";
 import { useRouter } from "next/navigation";
+import Loader from "../../../utility/loader/loading";
 
 const Main = () => {
   const router = useRouter()
@@ -11,6 +12,7 @@ const Main = () => {
     router.push("/showdata");
   };
   return (
+    <Suspense fallback={<Loader />}>
     <div className="flex flex-col flex-wrap">
       <div  className="mt-20 ">
       <div className=" m-auto lg:w-1/2 w-3/4">
@@ -29,6 +31,7 @@ const Main = () => {
       {/* form here */}
       <BookingForm />
     </div>
+    </Suspense>
   );
 };
 

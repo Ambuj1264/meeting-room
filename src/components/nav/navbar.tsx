@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -11,19 +11,52 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
 } from "@nextui-org/react";
+import Cookies from "js-cookie";
 import { AcmeLogo } from "./AcmeLogo";
-// import { BRAND_NAME } from "@/utility/constant";
 import { ThemeSwitcher } from "../themes/ThemeSwitcher";
 import { BRAND_NAME } from "../../utility/constant";
+import { toPascalCase } from "../../utility/case";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../utility/redux/slices/feature/auth";
 
 export default function FullNavbar() {
-  const [isMenuOpen] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    email: "",
+  });
+  const result = useSelector((state:any)=>state.counter);
+  console.log(result, "result")
+  
+  const router = useRouter();
+  const [showPopup, setShowPopup] = useState(false);
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsUserLoggedIn(Cookies.get("userToken") ? true : false);
+      setUserInfo(JSON.parse(Cookies.get("userInfo")! ? Cookies.get("userInfo")! : "{}"));
+    }
+  }, [result?.value]);
+
+  const togglePopup = () => setShowPopup((prev) => !prev);
+
+  const handleLogout = () => {
+    Cookies.remove("userToken");
+    Cookies.remove("userInfo");
+    setIsUserLoggedIn(false);
+    setShowPopup(false);
+    dispatch(logout())
+    router.push("/")
+  };
 
   const menuItems = [
-    {name: "Home", href:"/"},
-    { name: "About", href:"/about"},
-    {name:  "Contact Us", href:"/contact"},
-   ];
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "Contact Us", href: "/contact" },
+  ];
+
   return (
     <Navbar
       isBordered
@@ -44,52 +77,47 @@ export default function FullNavbar() {
         ],
       }}
     >
-        <NavbarMenuToggle
-     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-     className="sm:hidden"
-   />
+      <NavbarMenuToggle aria-label="Open menu" className="sm:hidden" />
       <NavbarBrand>
         <Link color="foreground" href="/">
-          <AcmeLogo  />
+          <AcmeLogo />
           <p className="font-bold text-inherit text-primary">{BRAND_NAME}</p>
         </Link>
       </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4 " justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="/" className="text-primary font-medium">
-            Home
-          </Link>
-        </NavbarItem>
-        <NavbarItem >
-          <Link href="/about" className="text-primary font-medium">
-            About
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/contact" className="text-primary font-medium" >
-            Contact Us
-          </Link>
-        </NavbarItem>
+      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        {menuItems.map((item) => (
+          <NavbarItem key={item.name}>
+            <Link color="foreground" href={item.href} className="text-primary font-medium">
+              {item.name}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button as={Link} href="/login" variant="flat" className="text-primary font-medium">
-            Login
-          </Button>
-          &nbsp; <ThemeSwitcher />
+          {isUserLoggedIn ? (
+            <Button as={Link} variant="flat" className="text-primary font-medium" onClick={togglePopup}>
+              {toPascalCase(userInfo.name)}
+            </Button>
+          ) : (
+            <Button as={Link} href="/login" variant="flat" className="text-primary font-medium">
+              Login
+            </Button>
+          )}
         </NavbarItem>
-      </NavbarContent >
+        &nbsp; <ThemeSwitcher />
+      </NavbarContent>
+      {showPopup && (
+        <div className="absolute top-12 right-20 bg-white p-4 shadow-lg rounded-md">
+          <Button onClick={handleLogout} variant="flat" className="text-danger font-medium">
+            Logout
+          </Button>
+        </div>
+      )}
       <NavbarMenu>
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
-            <Link
-              color={
-                index === 1 ? "primary" : "foreground"
-              }
-              className="w-full"
-              href={item?.href}
-              size="lg"
-            >
+            <Link color={index === 1 ? "primary" : "foreground"} className="w-full" href={item?.href} size="lg">
               {item?.name}
             </Link>
           </NavbarMenuItem>
