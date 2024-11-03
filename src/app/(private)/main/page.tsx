@@ -4,14 +4,18 @@ import React, { Suspense } from "react";
 import BookingForm from "../../../components/forms/BookingForm";
 import { useRouter } from "next/navigation";
 import Loader from "../../../utility/loader/loading";
+import { useSelector } from "react-redux";
+
 
 const Main = () => {
+  const {isAuthenticated} = useSelector((state:any)=>state.auth);
   const router = useRouter();
   const sumbitData = () => {
     console.log("data submitted");
     router.push("/showdata");
   };
   return (
+    isAuthenticated &&
     <Suspense fallback={<Loader />}>
     <div className="flex flex-col flex-wrap">
       <div  className="mt-20 ">
