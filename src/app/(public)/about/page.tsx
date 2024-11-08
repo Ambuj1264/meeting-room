@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
 import appointmentImage from "../../../../public/appointment-booking-mobile-concept.png";
-import { HERO_ACTION_BUTTON, HERO_HEADING } from "../../../utility/constant";
+// import { HERO_ACTION_BUTTON, HERO_HEADING } from "../../../utility/constant";
 
 const About = () => {
   return (

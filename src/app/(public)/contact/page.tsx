@@ -3,24 +3,62 @@ import React from "react";
 import { Button, Input, Textarea } from "@nextui-org/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useMutation } from "@tanstack/react-query";
+import { errorToast, successToast } from "../../../utility/toast";
+
+interface ContactData {
+  email: string;
+  name: string;
+  message: string;
+}
+
+async function ContactAPI(newPostData: ContactData): Promise<any> {
+  const response = await fetch("http://localhost:8000/contact/us", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newPostData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to send message");
+  }
+
+  return response.json();
+}
 
 const Contact = () => {
+  const mutation = useMutation({
+    mutationFn: ContactAPI,
+    onSuccess: async () => {
+      formik.resetForm();
+      successToast("Message sent successfully");
+    },
+    onError: (error: Error) => {
+      errorToast(error.message);
+    },
+  });
+
   const formik = useFormik({
     initialValues: {
       email: "",
       name: "",
-      message: ""
+      message: "",
     },
     validationSchema: Yup.object({
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
-      name: Yup.string().required("name is required"),
-      message: Yup.string().required("message is required"),
+      name: Yup.string().required("Name is required"),
+      message: Yup.string().required("Message is required"),
     }),
-    onSubmit: (values) => {
-      // Handle form submission
-      console.log(values);
+    onSubmit: (values: ContactData) => {
+      mutation.mutate(values, {
+        onSettled: () => {
+          formik.setSubmitting(false); // Allow re-submission after the request completes
+        },
+      });
     },
   });
 
@@ -41,7 +79,6 @@ const Contact = () => {
             onBlur={formik.handleBlur}
             name="email"
           />
-          {/* Added minHeight to prevent form size change */}
           <p
             className="text-red-500 text-sm mt-1 mx-1"
             style={{ minHeight: "20px" }}
@@ -53,13 +90,12 @@ const Contact = () => {
           <Input
             type="text"
             label="Name"
-            placeholder="Enter your Name"
+            placeholder="Enter your name"
             value={formik.values.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             name="name"
           />
-          {/* Added minHeight to prevent form size change */}
           <p
             className="text-red-500 text-sm mt-1"
             style={{ minHeight: "20px" }}
@@ -76,7 +112,6 @@ const Contact = () => {
             onBlur={formik.handleBlur}
             name="message"
           />
-          {/* Added minHeight to prevent form size change */}
           <p
             className="text-red-500 text-sm mt-1"
             style={{ minHeight: "20px" }}
@@ -88,7 +123,7 @@ const Contact = () => {
           type="submit"
           color="primary"
           variant="shadow"
-          disabled={formik.isSubmitting || !formik.isValid}
+          isLoading ={mutation.isPending}
         >
           Submit
         </Button>

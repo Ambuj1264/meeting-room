@@ -1,14 +1,21 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import Link from "next/link";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { error } from "console";
+import { errorToast, successToast } from "../../../utility/toast";
+import { useRouter } from "next/navigation";
 
 // Generate a unique ID for each meeting room (you can use libraries like uuid for this)
 const generateId = () => `room_${Math.random().toString(36).substr(2, 9)}`;
 
 const SignUp = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   // Yup validation schema
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -45,7 +52,7 @@ const SignUp = () => {
 
   // Form submit handler
   const onSubmit = (values: any, { resetForm }: { resetForm: () => void }) => {
-    console.log("Form data", values);
+    setIsLoading(true);
     // Handle form submission here
     const sendToDatabase = async () => {
       try {
@@ -57,9 +64,19 @@ const SignUp = () => {
           body: JSON.stringify(values),
         });
         const data = await response.json();
+        setIsLoading(false);
+        if(data.status !== "SUCCESS") {
+          if(data.message === "Email already exists") {
+           return errorToast("Email already exists");
+        } 
+          errorToast(data.message);
+        }else{
+          successToast(data.message);
+          router.push("/login")
+        }
         console.log(data);
       } catch (error) {
-        console.error("Error:", error);
+        console.log("Error:", error);
       }
     }
 
@@ -113,15 +130,22 @@ const SignUp = () => {
                 />
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col relative">
                 <Field
                   name="password"
                   as={Input}
-                  type="password"
+                  type={showPassword? "password" : "text"}
                   label="Password"
                   placeholder="Enter your password"
                   error={errors.password && touched.password}
                 />
+                 <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+          >
+            {showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
+          </button>
                 <ErrorMessage
                   name="password"
                   component="div"
@@ -197,7 +221,7 @@ const SignUp = () => {
                 </div>
               )}
 
-              <Button type="submit" color="primary" variant="shadow">
+              <Button type="submit" color="primary" variant="shadow" isLoading={isLoading}>
                 Sign Up
               </Button>
               <p>

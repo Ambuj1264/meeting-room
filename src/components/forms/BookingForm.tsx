@@ -4,6 +4,7 @@ import { ErrorMessage, Field, useFormik } from "formik";
 import * as Yup from "yup";
 import { Tabs, Tab, Input, Button, Card, CardBody, Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { m } from "framer-motion";
+import { errorToast, successToast } from "../../utility/toast";
 
 export default function 
 BookingForm() {
@@ -90,7 +91,21 @@ BookingForm() {
       if (values) {
         console.log(values, "Form values submitted");
         try {
-          // Handle the form submission here
+          const response = await fetch("http://localhost:8000"+"/booking/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(values),
+          });
+          const data = await response.json();
+          console.log(data, "Data sent to server");
+          if(data.status !== "SUCCESS") {
+            errorToast(data.message);
+          } else {
+            successToast(data.message);
+            formik.resetForm();
+          }
         } catch (error: any) {
           console.log(error.message);
         }
