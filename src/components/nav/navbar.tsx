@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, {  useEffect, useState , Suspense} from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -19,7 +19,7 @@ import { toPascalCase } from "../../utility/case";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../utility/redux/slices/feature/auth";
-
+import Loader from "../../utility/loader/loading";
 export default function FullNavbar() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState({
@@ -27,7 +27,6 @@ export default function FullNavbar() {
     email: "",
   });
   const result = useSelector((state:any)=>state.counter);
-  console.log(result, "result")
   
   const router = useRouter();
   const [showPopup, setShowPopup] = useState(false);
@@ -53,11 +52,13 @@ export default function FullNavbar() {
 
   const menuItems = [
     { name: "Home", href: "/" },
+    { name: "Upcoming Booking", href: "/showdata" },
     { name: "About", href: "/about" },
     { name: "Contact Us", href: "/contact" },
   ];
 
   return (
+    <Suspense fallback={<Loader />}>
     <Navbar
       isBordered
       className="absolute inset-x-0 top-0 z-50"
@@ -124,5 +125,6 @@ export default function FullNavbar() {
         ))}
       </NavbarMenu>
     </Navbar>
+    </Suspense>
   );
 }

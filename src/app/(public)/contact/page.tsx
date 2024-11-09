@@ -13,7 +13,7 @@ interface ContactData {
 }
 
 async function ContactAPI(newPostData: ContactData): Promise<any> {
-  const response = await fetch("http://localhost:8000/contact/us", {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/contact/us`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

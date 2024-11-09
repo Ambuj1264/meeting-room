@@ -34,7 +34,7 @@ const Login = () => {
       setSubmitting(true);
       try {
         const response = await fetch(
-          `http://localhost:8000/users/login`,
+          `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/login`,
           {
             method: "POST",
             headers: {

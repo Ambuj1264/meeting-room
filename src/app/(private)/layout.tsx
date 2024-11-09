@@ -14,7 +14,7 @@ const Layout = ({children}:{children:React.ReactNode}) => {
       }
     }, [isAuthenticated, router]);
   return (
-    <Suspense fallback={<Loader />}  >{children}</Suspense>
+    <Suspense fallback={<Loader />}>{children}</Suspense>
   )
 }
 

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { error } from "console";
 import { errorToast, successToast } from "../../../utility/toast";
 import { useRouter } from "next/navigation";
 
@@ -56,7 +55,7 @@ const SignUp = () => {
     // Handle form submission here
     const sendToDatabase = async () => {
       try {
-        const response = await fetch("http://localhost:8000"+"/users/create", {
+        const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_BASE_URL+"/users/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -74,8 +73,8 @@ const SignUp = () => {
           successToast(data.message);
           router.push("/login")
         }
-        console.log(data);
       } catch (error) {
+        setIsLoading(false);
         console.log("Error:", error);
       }
     }
@@ -184,7 +183,7 @@ const SignUp = () => {
                     setFieldValue(
                       "meetingRooms",
                       Array.from({ length: numRooms }, () => ({
-                        id: generateId(),
+                        // id: generateId(),
                         name: "",
                       }))
                     );
