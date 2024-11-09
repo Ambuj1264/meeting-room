@@ -55,7 +55,7 @@ const SignUp = () => {
     // Handle form submission here
     const sendToDatabase = async () => {
       try {
-        const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_BASE_URL+"/users/create", {
+        const response = await fetch(process.env.BACKEND_BASE_URL+"/users/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
