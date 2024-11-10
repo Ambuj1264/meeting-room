@@ -48,7 +48,7 @@ const Example: React.FC = () => {
   const [userData, setUserData] = useState<any>(null);
   useEffect(() => {
     setUserData(Cookies.get("userInfo") ? JSON.parse(Cookies.get("userInfo") || "") : null);
-  },[])
+  },[userData])
   const fetchData = () => {
     setLoading(true);
 
