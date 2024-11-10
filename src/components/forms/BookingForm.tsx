@@ -29,7 +29,7 @@ export default function BookingForm() {
     const fetchRoomData = async () => {
       if (userInfo) {
         try {
-          const response = await fetch(`http://localhost:8000/booking/findRoomsByCompanyId/${userInfo.companyId}`, {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/booking/findRoomsByCompanyId/${userInfo.companyId}`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
