@@ -45,13 +45,10 @@ const Example: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<[string, string] | null>(null);
-  const [userData, setUserData] = useState<any>(null);
-  useEffect(() => {
-    setUserData(Cookies.get("userInfo") ? JSON.parse(Cookies.get("userInfo") || "") : null);
-  },[userData])
+ 
   const fetchData = () => {
     setLoading(true);
-
+    const userData = Cookies.get("userInfo") ? JSON.parse(Cookies.get("userInfo") || "") : null
     const queryParams = {
       search: searchTerm,
       date: selectedDate,
@@ -62,7 +59,6 @@ const Example: React.FC = () => {
       sortField: tableParams.sortField,
       sortOrder: tableParams.sortOrder,
     };
-
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/booking/getAll/${userData?.companyId}?${qs.stringify(queryParams)}`)
       .then((res) => res.json())
       .then((results) => {
