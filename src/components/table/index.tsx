@@ -4,7 +4,7 @@ import { Table, Input, DatePicker, TimePicker, Button, Space } from 'antd';
 import type { GetProp, TableProps } from 'antd';
 import type { SorterResult } from 'antd/es/table/interface';
 import qs from 'qs';
-
+import Cookies from 'js-cookie';
 const { RangePicker: TimeRangePicker } = TimePicker;
 
 type ColumnsType<T extends object = object> = TableProps<T>['columns'];
@@ -45,7 +45,10 @@ const Example: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<[string, string] | null>(null);
-
+  const [userData, setUserData] = useState<any>(null);
+  useEffect(() => {
+    setUserData(Cookies.get("userInfo") ? JSON.parse(Cookies.get("userInfo") || "") : null);
+  },[])
   const fetchData = () => {
     setLoading(true);
 
@@ -60,7 +63,7 @@ const Example: React.FC = () => {
       sortOrder: tableParams.sortOrder,
     };
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/booking/getAll?${qs.stringify(queryParams)}`)
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/booking/getAll/${userData?.companyId}?${qs.stringify(queryParams)}`)
       .then((res) => res.json())
       .then((results) => {
         setData(results?.data);
