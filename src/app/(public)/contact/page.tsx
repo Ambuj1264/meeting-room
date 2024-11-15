@@ -12,6 +12,7 @@ interface ContactData {
   message: string;
 }
 
+
 async function ContactAPI(newPostData: ContactData): Promise<any> {
   const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/contact/us`, {
     method: "POST",
@@ -21,31 +22,61 @@ async function ContactAPI(newPostData: ContactData): Promise<any> {
     body: JSON.stringify(newPostData),
   });
 
+  // If the response is not ok, throw an error
   if (!response.ok) {
     throw new Error("Failed to send message");
   }
 
+  // Return the response data
   return response.json();
 }
 
+/**
+ * The Contact component is a form for sending a message to the site owner.
+ */
 const Contact = () => {
+  /**
+   * The mutation function is a hook that wraps the `ContactAPI` function with
+   * the necessary logic to handle errors and loading states.
+   */
   const mutation = useMutation({
+    /**
+     * The mutation function is called with the form data as an argument.
+     */
     mutationFn: ContactAPI,
+    /**
+     * The `onSuccess` callback is called when the mutation is successful.
+     * It resets the form and shows a success toast message.
+     */
     onSuccess: async () => {
       formik.resetForm();
       successToast("Message sent successfully");
     },
+    /**
+     * The `onError` callback is called when the mutation errors.
+     * It shows an error toast message with the error message.
+     */
     onError: (error: Error) => {
       errorToast(error.message);
     },
   });
 
+  /**
+   * The `useFormik` hook is used to manage the form state and validation.
+   */
   const formik = useFormik({
+    /**
+     * The initial values of the form fields.
+     */
     initialValues: {
       email: "",
       name: "",
       message: "",
     },
+    /**
+     * The validation schema is a Yup object that defines the validation rules
+     * for each form field.
+     */
     validationSchema: Yup.object({
       email: Yup.string()
         .email("Invalid email address")
@@ -53,8 +84,17 @@ const Contact = () => {
       name: Yup.string().required("Name is required"),
       message: Yup.string().required("Message is required"),
     }),
+    /**
+     * The `onSubmit` callback is called when the form is submitted.
+     * It calls the mutation function with the form data as an argument.
+     */
     onSubmit: (values: ContactData) => {
       mutation.mutate(values, {
+        /**
+         * The `onSettled` callback is called when the mutation is settled
+         * (i.e. either successful or errored). It allows re-submission after
+         * the request completes.
+         */
         onSettled: () => {
           formik.setSubmitting(false); // Allow re-submission after the request completes
         },
@@ -123,7 +163,7 @@ const Contact = () => {
           type="submit"
           color="primary"
           variant="shadow"
-          isLoading ={mutation.isPending}
+          isLoading={mutation.isPending}
         >
           Submit
         </Button>
