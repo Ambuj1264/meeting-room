@@ -90,7 +90,7 @@ const CreateUser = () => {
         >
           {({ errors, touched }) => (
             <Form className="flex flex-col gap-7 p-10 border border-gray-300 rounded-lg shadow-lg lg:w-1/3 md:w-1/2 w-full">
-              <h1 className="text-3xl font-bold text-primary">Create User</h1>
+              <h1 className="text-3xl font-bold text-primary">Create Team</h1>
 
               <div className="flex flex-col">
                 <Field
@@ -156,7 +156,7 @@ const CreateUser = () => {
                 variant="shadow"
                 isLoading={isLoading}
               >
-                Sign Up
+                Create
               </Button>
             </Form>
           )}

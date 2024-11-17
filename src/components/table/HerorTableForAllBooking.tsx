@@ -81,7 +81,7 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
-const Example: React.FC = () => {
+const HeroTableForAllBooking: React.FC = () => {
   const [data, setData] = useState<DataType[]>([]);
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState<TableParams>({
@@ -151,39 +151,10 @@ const Example: React.FC = () => {
 
   return (
     <div>
-      <Space
-        style={{ marginBottom: 16, display: "flex", justifyContent: "end" }}
-      >
-        <Input.Search
-          placeholder="Search by name or email"
-          onSearch={setSearchTerm}
-          style={{ width: 200 }}
-        />
-        <DatePicker
-          placeholder="Select Date"
-          onChange={(date, dateString: any) =>
-            setSelectedDate(dateString || null)
-          }
-        />
-        <TimeRangePicker
-          placeholder={["Start Time", "End Time"]}
-          onChange={(times, timeStrings) =>
-            setTimeRange(
-              timeStrings[0] && timeStrings[1]
-                ? [timeStrings[0], timeStrings[1]]
-                : null
-            )
-          }
-        />
-        <Button type="primary" onClick={fetchData}>
-          Filter
-        </Button>
-      </Space>
       <Table<DataType>
         columns={columns}
         rowKey={(record: DataType) => record._id}
         dataSource={data}
-        pagination={tableParams.pagination}
         loading={loading}
         onChange={handleTableChange}
       />
@@ -191,4 +162,4 @@ const Example: React.FC = () => {
   );
 };
 
-export default Example;
+export default HeroTableForAllBooking;

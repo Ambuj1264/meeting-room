@@ -30,14 +30,6 @@ interface TableParams {
   filters?: Parameters<GetProp<TableProps, "onChange">>[1];
 }
 
-// const columns: ColumnsType<DataType> = [
-//   { title: 'Name', dataIndex: 'name', width: '20%' },
-//   { title: 'Email', dataIndex: 'email' },
-//   { title: 'Date', dataIndex: 'date' },
-//   { title: 'Start Time', dataIndex: 'startTime' },
-//   { title: 'End Time', dataIndex: 'endTime' },
-//   { title: 'Meeting Room', dataIndex: 'meetingId', render: (meetingId) => meetingId?.name || '' },
-// ];
 const columns: ColumnsType<DataType> = [
   { title: "Name", dataIndex: "name", width: "20%" },
   { title: "Email", dataIndex: "email" },
@@ -81,7 +73,7 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
-const Example: React.FC = () => {
+const LiveTable: React.FC = () => {
   const [data, setData] = useState<DataType[]>([]);
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState<TableParams>({
@@ -107,7 +99,7 @@ const Example: React.FC = () => {
       sortOrder: tableParams.sortOrder,
     };
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/booking/getAll/${
+      `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/booking/liveMeeting/${
         userData?.companyId
       }?${qs.stringify(queryParams)}`
     )
@@ -151,39 +143,10 @@ const Example: React.FC = () => {
 
   return (
     <div>
-      <Space
-        style={{ marginBottom: 16, display: "flex", justifyContent: "end" }}
-      >
-        <Input.Search
-          placeholder="Search by name or email"
-          onSearch={setSearchTerm}
-          style={{ width: 200 }}
-        />
-        <DatePicker
-          placeholder="Select Date"
-          onChange={(date, dateString: any) =>
-            setSelectedDate(dateString || null)
-          }
-        />
-        <TimeRangePicker
-          placeholder={["Start Time", "End Time"]}
-          onChange={(times, timeStrings) =>
-            setTimeRange(
-              timeStrings[0] && timeStrings[1]
-                ? [timeStrings[0], timeStrings[1]]
-                : null
-            )
-          }
-        />
-        <Button type="primary" onClick={fetchData}>
-          Filter
-        </Button>
-      </Space>
       <Table<DataType>
         columns={columns}
         rowKey={(record: DataType) => record._id}
         dataSource={data}
-        pagination={tableParams.pagination}
         loading={loading}
         onChange={handleTableChange}
       />
@@ -191,4 +154,4 @@ const Example: React.FC = () => {
   );
 };
 
-export default Example;
+export default LiveTable;
