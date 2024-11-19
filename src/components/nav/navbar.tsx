@@ -20,11 +20,11 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../utility/redux/slices/feature/auth";
 import Loader from "../../utility/loader/loading";
+import { Dropdown, Menu, Space } from "antd";
 
 export default function FullNavbar() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState({ name: "", email: "", role: "" });
-  const [showPopup, setShowPopup] = useState(false);
 
   const result = useSelector((state: any) => state.counter);
   const dispatch = useDispatch();
@@ -39,13 +39,10 @@ export default function FullNavbar() {
     }
   }, [result?.value]);
 
-  const togglePopup = () => setShowPopup((prev) => !prev);
-
   const handleLogout = () => {
     Cookies.remove("userToken");
     Cookies.remove("userInfo");
     setIsUserLoggedIn(false);
-    setShowPopup(false);
     dispatch(logout());
     router.push("/login");
   };
@@ -53,13 +50,9 @@ export default function FullNavbar() {
   const menuItems = isUserLoggedIn
     ? userInfo?.role === "admin"
       ? [
-          // { name: "Home", href: "/" },
           { name: "Upcoming Booking", href: "/showdata" },
           { name: "Create Booking", href: "/main" },
-          {
-            name: "Create Team",
-            href: "/createUsers",
-          },
+          { name: "Create Team", href: "/createUsers" },
           { name: "Contact Us", href: "/contact" },
         ]
       : [
@@ -73,6 +66,17 @@ export default function FullNavbar() {
         { name: "About", href: "/about" },
         { name: "Contact Us", href: "/contact" },
       ];
+
+  const profileMenu = (
+    <Menu>
+      <Menu.Item key="profile">
+        <Link href="/profile">Profile</Link>
+      </Menu.Item>
+      <Menu.Item key="logout" onClick={handleLogout}>
+        Logout
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <Suspense fallback={<Loader />}>
@@ -118,27 +122,11 @@ export default function FullNavbar() {
         <NavbarContent justify="end">
           <NavbarItem>
             {isUserLoggedIn ? (
-              <>
-                <Button
-                  as="button"
-                  variant="flat"
-                  className="text-primary font-medium"
-                  onClick={togglePopup}
-                >
-                  {toPascalCase(userInfo.name)}
+              <Dropdown overlay={profileMenu} trigger={["click"]}>
+                <Button className="text-primary font-medium">
+                  <Space>{toPascalCase(userInfo.name)}</Space>
                 </Button>
-                {showPopup && (
-                  <div className="absolute top-12 right-20 bg-white p-4 shadow-lg rounded-md">
-                    <Button
-                      onClick={handleLogout}
-                      variant="flat"
-                      className="text-danger font-medium"
-                    >
-                      Logout
-                    </Button>
-                  </div>
-                )}
-              </>
+              </Dropdown>
             ) : (
               <Button
                 as={Link}

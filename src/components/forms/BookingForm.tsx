@@ -255,6 +255,7 @@ export default function BookingForm() {
                     type="primary"
                     htmlType="submit"
                     style={{ width: "100%" }}
+                    loading={formik.isSubmitting}
                   >
                     Book Now
                   </Button>

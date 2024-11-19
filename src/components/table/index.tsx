@@ -1,11 +1,25 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Table, Input, DatePicker, TimePicker, Button, Space } from "antd";
+import {
+  Table,
+  Input,
+  DatePicker,
+  TimePicker,
+  Button,
+  Space,
+  Modal,
+  Form,
+  Select,
+  Switch,
+  message,
+} from "antd";
 import type { GetProp, TableProps } from "antd";
 import type { SorterResult } from "antd/es/table/interface";
 import qs from "qs";
 import Cookies from "js-cookie";
+import { MdDeleteSweep } from "react-icons/md";
 const { RangePicker: TimeRangePicker } = TimePicker;
+const { Option } = Select;
 
 type ColumnsType<T extends object = object> = TableProps<T>["columns"];
 type TablePaginationConfig = Exclude<
@@ -21,6 +35,7 @@ interface DataType {
   startTime: string;
   endTime: string;
   meetingId: { name: string };
+  companyId: { _id: string };
 }
 
 interface TableParams {
@@ -30,14 +45,6 @@ interface TableParams {
   filters?: Parameters<GetProp<TableProps, "onChange">>[1];
 }
 
-// const columns: ColumnsType<DataType> = [
-//   { title: 'Name', dataIndex: 'name', width: '20%' },
-//   { title: 'Email', dataIndex: 'email' },
-//   { title: 'Date', dataIndex: 'date' },
-//   { title: 'Start Time', dataIndex: 'startTime' },
-//   { title: 'End Time', dataIndex: 'endTime' },
-//   { title: 'Meeting Room', dataIndex: 'meetingId', render: (meetingId) => meetingId?.name || '' },
-// ];
 const columns: ColumnsType<DataType> = [
   { title: "Name", dataIndex: "name", width: "20%" },
   { title: "Email", dataIndex: "email" },
@@ -91,6 +98,34 @@ const Example: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<[string, string] | null>(null);
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState<DataType | null>(null);
+  const [roomData, setRoomData] = useState<{ id: string; name: string }[]>([]);
+  const [form] = Form.useForm();
+
+  const fetchRoomData = async () => {
+    const userInfo = Cookies.get("userInfo")
+      ? JSON.parse(Cookies.get("userInfo") || "")
+      : null;
+    if (userInfo) {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/booking/findRoomsByCompanyId/${userInfo.companyId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = await response.json();
+        setRoomData(data.data || []);
+      } catch (error) {
+        console.error("Error fetching room data:", error);
+      }
+    }
+  };
+
   const fetchData = () => {
     setLoading(true);
     const userData = Cookies.get("userInfo")
@@ -125,7 +160,34 @@ const Example: React.FC = () => {
       });
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleDelete = async (record: DataType) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/booking/deleteMeeting/${record._id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+          body: JSON.stringify({
+            email: record.email,
+            companyId: record.companyId?._id,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete meeting");
+        return;
+      }
+      message.success("Meeting deleted successfully");
+      fetchData();
+    } catch (error) {
+      message.error("Failed to delete meeting");
+    }
+  };
+
   useEffect(fetchData, [
     tableParams.pagination?.current,
     tableParams.pagination?.pageSize,
@@ -135,6 +197,8 @@ const Example: React.FC = () => {
     selectedDate,
     timeRange,
   ]);
+
+  // useEffect(fetchRoomData, []);
 
   const handleTableChange: TableProps<DataType>["onChange"] = (
     pagination,
@@ -180,7 +244,19 @@ const Example: React.FC = () => {
         </Button>
       </Space>
       <Table<DataType>
-        columns={columns}
+        columns={[
+          ...columns,
+          {
+            title: "Actions",
+            render: (text, record) => (
+              <Space>
+                <Button danger onClick={() => handleDelete(record)}>
+                  <MdDeleteSweep />
+                </Button>
+              </Space>
+            ),
+          },
+        ]}
         rowKey={(record: DataType) => record._id}
         dataSource={data}
         pagination={tableParams.pagination}
