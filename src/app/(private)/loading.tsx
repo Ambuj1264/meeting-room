@@ -1,10 +1,8 @@
-import React from 'react'
-import Loading from '../../utility/loader/loading'
+import React from "react";
+import Loading from "../../utility/loader/loading";
 
-const loading = () => {
-  return (
-    <Loading />
-  )
-}
+const LoadingData = () => {
+  return <Loading />;
+};
 
-export default loading
+export default LoadingData;
