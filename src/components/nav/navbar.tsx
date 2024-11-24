@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, useMemo } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -31,7 +31,9 @@ export default function FullNavbar() {
   const router = useRouter();
 
   useEffect(() => {
+    console.log("second");
     if (typeof window !== "undefined") {
+      console.log("first");
       const userToken = Cookies.get("userToken");
       const userData = Cookies.get("userInfo");
       setIsUserLoggedIn(!!userToken);
@@ -107,12 +109,14 @@ export default function FullNavbar() {
           </Link>
         </NavbarBrand>
         <NavbarContent className="hidden sm:flex gap-4" justify="center">
-          {menuItems.map((item) => (
+          {menuItems?.map((item) => (
             <NavbarItem key={item.name}>
               <Link
                 color="foreground"
-                href={item.href}
+                // href={item.href}
+                style={{ cursor: "pointer" }}
                 className="text-primary font-medium"
+                onClick={() => router.push(item.href)}
               >
                 {item.name}
               </Link>
