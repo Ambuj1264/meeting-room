@@ -1,12 +1,12 @@
 "use client";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import { Card, Descriptions, Avatar, Button, Row, Col } from "antd";
 import { EditOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { ImUserTie } from "react-icons/im";
 import Loader from "../../../utility/loader/loading";
 const UserDetails: React.FC = () => {
   const primaryColor = "#1677ff";
-
+  const [loader, setLoader] = React.useState(false);
   const user = {
     name: "John Doe",
     email: "johndoe@example.com",
@@ -14,7 +14,9 @@ const UserDetails: React.FC = () => {
     address: "123 Main Street, Springfield",
     avatarUrl: "https://i.pravatar.cc/150",
   };
-
+  useEffect(() => {
+    setLoader(true);
+  }, [loader]);
   return (
     <Suspense fallback={<Loader />}>
       <div className="m-20">

@@ -1,8 +1,11 @@
-import React from "react";
-import Loading from "../../../utility/loader/loading";
-
-const loading = () => {
-  return <Loading />;
+import React, { Suspense } from "react";
+import Loader from "@/utility/loader/loading";
+const Loading = () => {
+  return (
+    <Suspense fallback={<Loader />}>
+      <Loader />
+    </Suspense>
+  );
 };
 
-export default loading;
+export default Loading;
