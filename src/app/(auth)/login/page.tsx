@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import { increment } from "../../../utility/redux/slices/feature/counter";
 import { login } from "../../../utility/redux/slices/feature/auth";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-
+import { RiLoginCircleFill } from "react-icons/ri";
 const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -125,7 +125,7 @@ const Login = () => {
           variant="shadow"
           disabled={formik.isSubmitting || !formik.isValid}
         >
-          Login
+          Login <RiLoginCircleFill />
         </Button>
         <p>
           Don&apos;t have an account?{" "}

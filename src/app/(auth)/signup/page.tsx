@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { errorToast, successToast } from "../../../utility/toast";
 import { useRouter } from "next/navigation";
+import { SiGnuprivacyguard } from "react-icons/si";
 
 // Generate a unique ID for each meeting room (you can use libraries like uuid for this)
 const generateId = () => `room_${Math.random().toString(36).substr(2, 9)}`;
@@ -238,7 +239,7 @@ const SignUp = () => {
                 variant="shadow"
                 isLoading={isLoading}
               >
-                Sign Up
+                Sign Up <SiGnuprivacyguard />
               </Button>
               <p>
                 Already have an account?{" "}
