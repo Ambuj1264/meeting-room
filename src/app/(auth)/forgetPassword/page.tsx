@@ -86,6 +86,7 @@ const Login = () => {
           color="primary"
           variant="shadow"
           disabled={formik.isSubmitting || !formik.isValid}
+          isLoading={formik.isSubmitting}
         >
           Sent Mail{" "}
           <span className="font-bold text-2xl">

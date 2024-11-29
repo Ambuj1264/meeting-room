@@ -39,13 +39,16 @@ const ForgetFinalPage = () => {
       setSubmitting(true);
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/resetPassword/${id}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/forgotPassword`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(values),
+            body: JSON.stringify({
+              newPassword: values.newPassword,
+              token: id,
+            }),
           }
         );
 
@@ -157,6 +160,7 @@ const ForgetFinalPage = () => {
           color="primary"
           variant="shadow"
           disabled={formik.isSubmitting || !formik.isValid}
+          isLoading={formik.isSubmitting}
         >
           Submit <BsFillSendFill />
         </Button>

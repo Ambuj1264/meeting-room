@@ -1,22 +1,67 @@
 "use client";
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { Card, Descriptions, Avatar, Button, Row, Col } from "antd";
 import { EditOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { ImUserTie } from "react-icons/im";
 import Loader from "../../../utility/loader/loading";
+import Cookies from "js-cookie";
+import { errorToast } from "@/utility/toast";
 const UserDetails: React.FC = () => {
   const primaryColor = "#1677ff";
   const [loader, setLoader] = React.useState(false);
-  const user = {
-    name: "John Doe",
-    email: "johndoe@example.com",
-    phone: "+1 234 567 890",
-    address: "123 Main Street, Springfield",
-    avatarUrl: "https://i.pravatar.cc/150",
-  };
+  // const user = {
+  //   name: "John Doe",
+  //   email: "johndoe@example.com",
+  //   phone: "+1 234 567 890",
+  //   address: "123 Main Street, Springfield",
+  //   avatarUrl: "https://i.pravatar.cc/150",
+  // };
+  const [user, setUserData] = useState<any>({});
+
   useEffect(() => {
+    const userInfo = Cookies.get("userInfo")
+      ? JSON.parse(Cookies.get("userInfo") || "")
+      : null;
+
+    setUserData(userInfo);
     setLoader(true);
-  }, [loader]);
+
+    const fetchUserDetails = async () => {
+      if (!userInfo || !userInfo.email) {
+        console.error("User info is missing!");
+        setLoader(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/users/getMe`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: userInfo._id,
+            }),
+          }
+        );
+        if (!response.ok) {
+          errorToast("Something went wrong");
+        }
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      } finally {
+        setLoader(false);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
+  console.log(user, "user");
+
   return (
     <Suspense fallback={<Loader />}>
       <div className="m-20">
@@ -70,14 +115,14 @@ const UserDetails: React.FC = () => {
                         />
                         {user.email}
                       </Descriptions.Item>
-                      <Descriptions.Item label="Phone">
-                        <PhoneOutlined
+                      <Descriptions.Item label="Organization">
+                        {/* <OrganizationOutlined
                           style={{ color: primaryColor, marginRight: 8 }}
-                        />
-                        {user.phone}
+                        /> */}
+                        {user.companyId}
                       </Descriptions.Item>
-                      <Descriptions.Item label="Address">
-                        {user.address}
+                      <Descriptions.Item label="role">
+                        {user.role}
                       </Descriptions.Item>
                     </Descriptions>
                     <div style={{ marginTop: "20px", textAlign: "right" }}>

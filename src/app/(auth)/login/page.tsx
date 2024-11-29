@@ -124,6 +124,7 @@ const Login = () => {
           color="primary"
           variant="shadow"
           disabled={formik.isSubmitting || !formik.isValid}
+          isLoading={formik.isSubmitting}
         >
           Login <RiLoginCircleFill />
         </Button>

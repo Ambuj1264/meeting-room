@@ -12,7 +12,6 @@ import AllUserDataForCompany from "@/components/table/AllUserDataForCompany";
 const CreateUser = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
