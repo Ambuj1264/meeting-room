@@ -9,9 +9,6 @@ import { errorToast, successToast } from "../../../utility/toast";
 import { useRouter } from "next/navigation";
 import { SiGnuprivacyguard } from "react-icons/si";
 
-// Generate a unique ID for each meeting room (you can use libraries like uuid for this)
-const generateId = () => `room_${Math.random().toString(36).substr(2, 9)}`;
-
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

@@ -9,14 +9,8 @@ import { errorToast } from "@/utility/toast";
 const UserDetails: React.FC = () => {
   const primaryColor = "#1677ff";
   const [loader, setLoader] = React.useState(false);
-  // const user = {
-  //   name: "John Doe",
-  //   email: "johndoe@example.com",
-  //   phone: "+1 234 567 890",
-  //   address: "123 Main Street, Springfield",
-  //   avatarUrl: "https://i.pravatar.cc/150",
-  // };
   const [user, setUserData] = useState<any>({});
+  const [fullUserDetails, setFullUserDetails] = useState<any>({});
 
   useEffect(() => {
     const userInfo = Cookies.get("userInfo")
@@ -51,6 +45,8 @@ const UserDetails: React.FC = () => {
         }
         const data = await response.json();
         console.log(data);
+        setFullUserDetails(data);
+        setLoader(false);
       } catch (error) {
         console.error("Error fetching user details:", error);
       } finally {
@@ -60,8 +56,10 @@ const UserDetails: React.FC = () => {
 
     fetchUserDetails();
   }, []);
-  console.log(user, "user");
 
+  if (loader) {
+    return <Loader />;
+  }
   return (
     <Suspense fallback={<Loader />}>
       <div className="m-20">
@@ -119,7 +117,10 @@ const UserDetails: React.FC = () => {
                         {/* <OrganizationOutlined
                           style={{ color: primaryColor, marginRight: 8 }}
                         /> */}
-                        {user.companyId}
+                        {fullUserDetails &&
+                          fullUserDetails.data &&
+                          fullUserDetails.data[0].company[0].name}
+                        {}
                       </Descriptions.Item>
                       <Descriptions.Item label="role">
                         {user.role}
