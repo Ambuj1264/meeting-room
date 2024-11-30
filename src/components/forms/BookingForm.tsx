@@ -69,6 +69,7 @@ export default function BookingForm() {
 
   const formik = useFormik({
     initialValues: {
+      subject: "",
       name: userData?.name || "",
       companyId: userData?.companyId || "",
       email: userData?.email || "",
@@ -79,6 +80,9 @@ export default function BookingForm() {
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
+      subject: Yup.string()
+        .required("Subject is required")
+        .max(100, "Max length is 100 characters"),
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
@@ -174,6 +178,19 @@ export default function BookingForm() {
                 className="flex flex-col gap-4"
                 onSubmit={formik.handleSubmit}
               >
+                <Input
+                  size="large"
+                  name="subject"
+                  placeholder="Agenda of Meeting"
+                  value={formik.values.subject}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                {formik.touched.subject && formik.errors.subject && (
+                  <span className="text-red-500 px-3 text-xs">
+                    {formik.errors.subject}
+                  </span>
+                )}
                 <DatePicker
                   size="large"
                   name="date"
