@@ -39,7 +39,8 @@ interface TableParams {
 //   { title: 'Meeting Room', dataIndex: 'meetingId', render: (meetingId) => meetingId?.name || '' },
 // ];
 const columns: ColumnsType<DataType> = [
-  { title: "Name", dataIndex: "name", width: "20%" },
+  { title: "Agenda of Meeting", dataIndex: "subject", width: "30%" },
+  { title: "Name", dataIndex: "name"},
   { title: "Email", dataIndex: "email" },
   { title: "Date", dataIndex: "date" },
   {
