@@ -227,6 +227,7 @@ const Example: React.FC = () => {
         />
         <TimeRangePicker
           placeholder={["Start Time", "End Time"]}
+          format="HH:mm" // This ensures only hours and minutes are shown
           onChange={(times, timeStrings) =>
             setTimeRange(
               timeStrings[0] && timeStrings[1]
@@ -235,6 +236,7 @@ const Example: React.FC = () => {
             )
           }
         />
+
         <Button type="primary" onClick={applyFilters}>
           Filter
         </Button>
