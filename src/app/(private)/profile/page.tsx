@@ -119,7 +119,7 @@ const UserDetails: React.FC = () => {
                         /> */}
                         {fullUserDetails &&
                           fullUserDetails.data &&
-                          fullUserDetails.data[0].company[0].name}
+                          fullUserDetails?.data?.[0]?.company[0]?.name}
                         {}
                       </Descriptions.Item>
                       <Descriptions.Item label="role">
