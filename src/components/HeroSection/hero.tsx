@@ -102,6 +102,25 @@ const Hero = () => {
           </>
         ) : null}
       </div>
+
+      <div>
+        <h1 className="text-xl sm:text-4xl md:text-5xl lg:text-5xl font-bold text-primary text-center mb-10">
+          DEMO VIDEO
+        </h1>
+
+        <div
+          className="flex justify-center align-center m-5"
+          data-aos="fade-up-right"
+        >
+          <video
+            src="https://res.cloudinary.com/dm7o4wqvv/video/upload/v1734166326/nx3jbpulehjpoonbroos.mp4"
+            muted
+            autoPlay
+            loop
+            controls
+          ></video>
+        </div>
+      </div>
     </>
   );
 };
